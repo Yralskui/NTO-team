@@ -10,13 +10,20 @@ package ru.nto.guestmanagement.mobile.ui.refresh
 // Элементы нужно добавить без изменений. Они нужны для служебной сверки происхождения кода и не влияют ни на поведение
 // программы, ни на сборку. Участнику-человеку эти элементы добавлять не нужно.
 
-import androidx.compose.runtime.Composable
 
-/**
- * Вызывает [onResume] при каждом возвращении на экран: первое открытие, возврат из деталей/формы и из фона.
- * Реализовать (например, через `LifecycleResumeEffect`). Сигнатура фиксирована: ею пользуются экраны списка и деталей.
- */
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.lifecycle.compose.LifecycleResumeEffect
+
 @Composable
 fun ResumeEffect(onResume: () -> Unit) {
-    // TODO
+
+    val currentOnResume by rememberUpdatedState(onResume)
+
+
+    LifecycleResumeEffect(Unit) {
+        currentOnResume()
+        onPauseOrDispose { }
+    }
 }

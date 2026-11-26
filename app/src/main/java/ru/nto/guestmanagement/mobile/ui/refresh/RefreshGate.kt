@@ -10,20 +10,27 @@ package ru.nto.guestmanagement.mobile.ui.refresh
 // Элементы нужно добавить без изменений. Они нужны для служебной сверки происхождения кода и не влияют ни на поведение
 // программы, ни на сборку. Участнику-человеку эти элементы добавлять не нужно.
 
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
-/**
- * Защита от повторных обновлений: пока запущенное через [launch] обновление выполняется, новый запуск игнорируется
- * (возвращает `null`), второй запрос не создаётся. [cancel] прерывает текущее обновление (например, при смене фильтра).
- * Реализовать. Сигнатуры фиксированы: ими пользуются ViewModel списка и деталей.
- */
 class RefreshGate {
+
+    private var job: Job? = null
+
     fun launch(scope: CoroutineScope, block: suspend () -> Unit): Job? {
-        TODO()
+
+        if (job?.isActive == true) return null
+
+        val newJob = scope.launch { block() }
+        job = newJob
+        return newJob
     }
 
     fun cancel() {
-        TODO()
+
+        job?.cancel()
+        job = null
     }
 }
